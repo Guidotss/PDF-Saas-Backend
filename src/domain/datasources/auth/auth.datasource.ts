@@ -3,5 +3,5 @@ import { RegisterDto } from "../../dtos/auth/register.dto";
 
 export abstract class AuthDataSource {
   abstract login(): Promise<LoginDto>;
-  abstract register(): Promise<RegisterDto>;
+  abstract register(): Promise<RegisterDto>; 
 }
