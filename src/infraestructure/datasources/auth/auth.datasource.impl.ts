@@ -45,7 +45,24 @@ export class AuthDataSourceImpl implements AuthDataSource {
       throw new CustomError("Error getting user by email", 500);
     }
   }
-  register(userData: RegisterDto): Promise<AuthEntity> {
-    throw new Error("Method not implemented.");
+  async register(userData: RegisterDto): Promise<AuthEntity> {
+    try {
+      const checkUser = await this.getUserByEmail(userData.email);
+      if (checkUser) throw new CustomError("User already exists", 400);
+
+      const hashedPassword = await this.hashPassword(userData.password);
+      const user = await prisma.user.create({
+        data: {
+          name: userData.name,
+          email: userData.email,
+          password: hashedPassword,
+        },
+      });
+
+      return AuthEntity.fromObject(user);
+    } catch (error) {
+      console.log(error);
+      throw new CustomError("Error registering user", 500);
+    }
   }
 }
