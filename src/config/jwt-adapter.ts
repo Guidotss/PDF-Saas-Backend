@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { envs } from "./envs";
 
 export class JwtAdapter {
-  static async sign(payload: any, expiresIn = "2h"): Promise<string | null> {
+  static async sign(payload: object, expiresIn = "2h"): Promise<string | null> {
     return new Promise((resolve) => {
       jwt.sign(
         payload,

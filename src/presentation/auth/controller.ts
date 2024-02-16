@@ -3,6 +3,7 @@ import { CustomError } from "../../domain/errors/custom.error";
 import { AuthRepository } from "../../domain/repositories/auth/auth.repository";
 import { RegisterDto } from "../../domain/dtos/auth/register.dto";
 import { LoginDto } from "../../domain/dtos/auth/login.dto";
+import { Login } from "../../domain/use-cases/auth/login";
 export class AuthController {
   constructor(private readonly authRepository: AuthRepository) {
     this.authRepository = authRepository;
@@ -50,7 +51,7 @@ export class AuthController {
     }
   };
 
-  public login = async (request: Request, response: Response) => {
+  public login = (request: Request, response: Response) => {
     const [error, loginDto] = LoginDto.login(request.body);
     if (error) {
       return response
@@ -63,19 +64,14 @@ export class AuthController {
     }
 
     try {
-      const user = await this.authRepository.login(loginDto!);
-      return response
-        .header("Content-Type", "application/json")
-        .status(200)
-        .json({
-          ok: true,
-          message: "User logged",
-          user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-          },
-        });
+      new Login(this.authRepository)
+            .execute(loginDto!)
+            .then(data => {
+                response.header("Content-Type", "application/json")
+                .status(200)
+                .json(data); 
+            })
+            .catch(error => this.handlerError(error, response));
     } catch (error) {
       this.handlerError(error, response);
     }
