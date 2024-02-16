@@ -15,12 +15,12 @@ export class AuthDataSourceImpl implements AuthDataSource {
     return bcrypt.compare(password, hash);
   }
 
-  private async getUserByEmail(email: string): Promise<AuthEntity> {
+  private async getUserByEmail(email: string): Promise<AuthEntity | null> {
     try {
       if (!email) throw new CustomError("Email is required", 400);
       const user = await prisma.user.findUnique({ where: { email } });
 
-      if (!user) throw new CustomError("User not found", 404);
+      if(!user) return null; 
 
       return AuthEntity.fromObject(user);
     } catch (error) {
