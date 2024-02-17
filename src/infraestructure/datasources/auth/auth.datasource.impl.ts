@@ -1,18 +1,23 @@
-import bcrypt from "bcrypt";
-import { prisma } from "../../../data/mongo";
-import { AuthDataSource } from "../../../domain/datasources/auth/auth.datasource";
-import { LoginDto } from "../../../domain/dtos/auth/login.dto";
-import { RegisterDto } from "../../../domain/dtos/auth/register.dto";
-import { AuthEntity } from "../../../domain/entities/auth/auth.entity";
-import { CustomError } from "../../../domain/errors/custom.error";
 
+import { Bcrypt } from "../../../config";
+import { prisma } from "../../../data/mongo";
+import { AuthDataSource, AuthEntity, CustomError, LoginDto, RegisterDto } from "../../../domain";
+
+type CompareFunction = (password: string, hash: string) => Promise<boolean>;
+type HashFunction = (password: string, salt: number) => Promise<string>;
 export class AuthDataSourceImpl implements AuthDataSource {
+
+  constructor(
+    private readonly compare: CompareFunction = Bcrypt.compare,
+    private readonly hash: HashFunction = Bcrypt.hash,
+  ){}
+
   private hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 10);
+    return this.hash(password, 10);
   }
 
   private comparePassword(password: string, hash: string): Promise<boolean> {
-    return bcrypt.compare(password, hash);
+    return this.compare(password, hash);
   }
 
   private async getUserByEmail(email: string): Promise<AuthEntity | null> {

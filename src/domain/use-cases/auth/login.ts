@@ -1,7 +1,6 @@
-import { JwtAdapter } from "../../../config/jwt-adapter";
-import { LoginDto } from "../../dtos/auth/login.dto";
-import { CustomError } from "../../errors/custom.error";
-import { AuthRepository } from "../../repositories/auth/auth.repository";
+import { AuthRepository, CustomError, LoginDto } from "../..";
+import { JwtAdapter } from "../../../config";
+
 
 interface UserToken {
   ok: boolean;

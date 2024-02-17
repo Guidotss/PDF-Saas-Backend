@@ -1,6 +1,5 @@
-import { LoginDto } from "../../dtos/auth/login.dto";
-import { RegisterDto } from "../../dtos/auth/register.dto";
-import { AuthEntity } from "../../entities/auth/auth.entity";
+import { AuthEntity, LoginDto, RegisterDto } from "../..";
+
 
 export abstract class AuthRepository {
   abstract login(userData: LoginDto): Promise<AuthEntity>;
