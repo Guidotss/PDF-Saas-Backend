@@ -1,6 +1,5 @@
 import { JwtAdapter } from "../../../config/jwt-adapter";
 import { LoginDto } from "../../dtos/auth/login.dto";
-import { AuthEntity } from "../../entities/auth/auth.entity";
 import { CustomError } from "../../errors/custom.error";
 import { AuthRepository } from "../../repositories/auth/auth.repository";
 

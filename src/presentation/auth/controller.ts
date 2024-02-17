@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
-import { CustomError } from "../../domain/errors/custom.error";
-import { AuthRepository } from "../../domain/repositories/auth/auth.repository";
-import { RegisterDto } from "../../domain/dtos/auth/register.dto";
-import { LoginDto } from "../../domain/dtos/auth/login.dto";
-import { Login } from "../../domain/use-cases/auth/login";
+import { AuthRepository, CustomError, Login, LoginDto, RegisterDto } from "../../domain";
+
 export class AuthController {
   constructor(private readonly authRepository: AuthRepository) {
     this.authRepository = authRepository;
