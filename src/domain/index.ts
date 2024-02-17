@@ -12,3 +12,4 @@ export * from "./errors/custom.error";
 
 
 export * from "./use-cases/auth/login";
+export * from "./use-cases/auth/register";

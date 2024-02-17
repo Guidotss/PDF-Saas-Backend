@@ -1,5 +1,12 @@
 import { Request, Response } from "express";
-import { AuthRepository, CustomError, Login, LoginDto, RegisterDto } from "../../domain";
+import {
+  AuthRepository,
+  CustomError,
+  Login,
+  LoginDto,
+  RegisterDto,
+  Register,
+} from "../../domain";
 
 export class AuthController {
   constructor(private readonly authRepository: AuthRepository) {
@@ -18,7 +25,7 @@ export class AuthController {
     }
   }
 
-  public register = async (request: Request, response: Response) => {
+  public register = (request: Request, response: Response) => {
     const [error, registerDto] = RegisterDto.register(request.body);
     if (error) {
       return response
@@ -30,19 +37,15 @@ export class AuthController {
         });
     }
     try {
-      const user = await this.authRepository.register(registerDto!);
-      return response
-        .header("Content-Type", "application/json")
-        .status(201)
-        .json({
-          ok: true,
-          message: "User created",
-          user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-          },
-        });
+      new Register(this.authRepository)
+        .execute(registerDto!)
+        .then((data) => {
+          response
+            .header("Content-Type", "application/json")
+            .status(201)
+            .json(data);
+        })
+        .catch((error) => this.handlerError(error, response));
     } catch (error) {
       this.handlerError(error, response);
     }
@@ -62,13 +65,14 @@ export class AuthController {
 
     try {
       new Login(this.authRepository)
-            .execute(loginDto!)
-            .then(data => {
-                response.header("Content-Type", "application/json")
-                .status(200)
-                .json(data); 
-            })
-            .catch(error => this.handlerError(error, response));
+        .execute(loginDto!)
+        .then((data) => {
+          response
+            .header("Content-Type", "application/json")
+            .status(200)
+            .json(data);
+        })
+        .catch((error) => this.handlerError(error, response));
     } catch (error) {
       this.handlerError(error, response);
     }
