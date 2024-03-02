@@ -6,6 +6,8 @@ import {
   LoginDto,
   RegisterDto,
   Register,
+  RenewTokenDto,
+  RenewTokenUseCase,
 } from "../../domain";
 
 export class AuthController {
@@ -76,5 +78,30 @@ export class AuthController {
     } catch (error) {
       this.handlerError(error, response);
     }
+  };
+
+  public renewToken = (request: Request, response: Response) => {
+    const token = request.header("x-token");
+    const [error, renewTokenDto] = RenewTokenDto.renewToken({ token: token! });
+
+    if (error) {
+      return response
+        .header("Content-Type", "application/json")
+        .status(400)
+        .json({
+          ok: false,
+          message: error,
+        });
+    }
+
+    new RenewTokenUseCase(this.authRepository)
+      .execute(renewTokenDto!)
+      .then((data) => {
+        response
+          .header("Content-Type", "application/json")
+          .status(200)
+          .json(data);
+      })
+      .catch((error) => this.handlerError(error, response));
   };
 }

@@ -5,6 +5,9 @@ export * from "./repositories/auth/auth.repository";
 
 export * from "./dtos/auth/login.dto";
 export * from "./dtos/auth/register.dto";
+export * from "./dtos/auth/renew-token.dto";
+
+
 export * from "./entities/auth/auth.entity";
 
 
@@ -13,3 +16,4 @@ export * from "./errors/custom.error";
 
 export * from "./use-cases/auth/login";
 export * from "./use-cases/auth/register";
+export * from "./use-cases/auth/renew-token";

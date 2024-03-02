@@ -1,16 +1,20 @@
-
 import { Bcrypt } from "../../../config";
 import { prisma } from "../../../data/mongo";
-import { AuthDataSource, AuthEntity, CustomError, LoginDto, RegisterDto } from "../../../domain";
+import {
+  AuthDataSource,
+  AuthEntity,
+  CustomError,
+  LoginDto,
+  RegisterDto,
+} from "../../../domain";
 
 type CompareFunction = (password: string, hash: string) => Promise<boolean>;
 type HashFunction = (password: string, salt: number) => Promise<string>;
 export class AuthDataSourceImpl implements AuthDataSource {
-
   constructor(
     private readonly compare: CompareFunction = Bcrypt.compare,
-    private readonly hash: HashFunction = Bcrypt.hash,
-  ){}
+    private readonly hash: HashFunction = Bcrypt.hash
+  ) {}
 
   private hashPassword(password: string): Promise<string> {
     return this.hash(password, 10);
@@ -25,7 +29,7 @@ export class AuthDataSourceImpl implements AuthDataSource {
       if (!email) throw new CustomError("Email is required", 400);
       const user = await prisma.user.findUnique({ where: { email } });
 
-      if(!user) return null; 
+      if (!user) return null;
 
       return AuthEntity.fromObject(user);
     } catch (error) {
@@ -68,6 +72,19 @@ export class AuthDataSourceImpl implements AuthDataSource {
     } catch (error) {
       console.log(error);
       throw new CustomError("Error registering user", 500);
+    }
+  }
+
+  async getUserById(id: string): Promise<AuthEntity> {
+    try {
+      console.log(id); 
+      const checkUser = await prisma.user.findUnique({ where: { id } });
+      if (!checkUser) throw new CustomError("User not found", 404);
+
+      return AuthEntity.fromObject(checkUser);
+    } catch (error) {
+      console.log(error);
+      throw new CustomError("Error getting user by id", 500);
     }
   }
 }

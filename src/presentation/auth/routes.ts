@@ -11,6 +11,7 @@ export class AuthRoutes {
 
     routes.post("/login", controller.login);
     routes.post("/register", controller.register);
+    routes.get('/renew-token', controller.renewToken); 
 
     return routes;
   }
