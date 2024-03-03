@@ -25,6 +25,14 @@ export class AuthController {
           message: error.message,
         });
     }
+
+    return response
+      .header("Content-Type", "application/json")
+      .status(500)
+      .json({
+        ok: false,
+        message: "Internal server error",
+      });
   }
 
   public register = (request: Request, response: Response) => {
