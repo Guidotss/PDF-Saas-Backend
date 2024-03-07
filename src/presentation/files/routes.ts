@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { FilesController } from "./controllers";
-import { PdfDecoder } from "../../infraestructure";
+import { PdfDecoder } from "../../presentation/services/pdf-decoder";
 
 export class FileRoutes {
   static get router() {

@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { PdfDecoder } from "../../infraestructure";
+import { PdfDecoder } from "../../presentation/services/pdf-decoder";
 import { CustomError } from "../../domain";
 
 export class FilesController {
