@@ -1,7 +1,6 @@
 import express, { Router, urlencoded } from "express";
 import morgan from "morgan";
 import cors from "cors";
-import fileUpload from "express-fileupload";
 import compression from "compression";
 
 interface ServerOptions {

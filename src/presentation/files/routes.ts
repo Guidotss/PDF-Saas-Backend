@@ -7,8 +7,7 @@ export class FileRoutes {
     const routes = Router();
     const pdfDecoder = new PdfDecoder();
     const controller = new FilesController(pdfDecoder);
-
-    routes.get("/health", controller.getHealth);
+    
     routes.post("/upload", controller.uploadPdf);
 
     return routes;
