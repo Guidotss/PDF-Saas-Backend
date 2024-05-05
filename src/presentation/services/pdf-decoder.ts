@@ -5,8 +5,6 @@ export class PdfDecoder {
   }: {
     pdfBuffer: Buffer;
   }): Promise<string> {
-    console.log("Decoding pdf...");
-    console.log(pdfBuffer); 
     return parse(pdfBuffer).then((data) => data.text);
   }
 }
