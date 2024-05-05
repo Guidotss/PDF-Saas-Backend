@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import atob from "atob";
 
 export class PdfDecoder {

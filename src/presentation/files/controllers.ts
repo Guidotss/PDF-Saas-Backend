@@ -1,4 +1,4 @@
-import { Response, Request } from "express";
+import { Response, Request, raw } from "express";
 import { PdfDecoder } from "../../presentation/services/pdf-decoder";
 import { CustomError } from "../../domain";
 
@@ -18,6 +18,7 @@ export class FilesController {
         });
     }
 
+    console.error(error);
     return response
       .header("Content-Type", "application/json")
       .status(500)
@@ -35,16 +36,16 @@ export class FilesController {
   };
 
   public uploadPdf = (req: Request, res: Response) => {
-    const file = req.body.pdf;
-    if (!file) {
-      return this.handleError(new CustomError("No file provided", 400), res);
-    }
+    const buffer = req.body;
+    console.log(buffer);
 
-    console.log(file); 
-
-    if (typeof file !== "string") {
-      return this.handleError(new CustomError("Invalid file provided", 400), res);
-    }
-    
+    let text = "";
+    this.pdfDecoder
+      .decodeBase64AndExtractText({ pdfBase64: buffer.toString() })
+      .then((data) => {
+        text = data;
+      })
+      .catch((error) => this.handleError(error, res));
+    console.log(text);
   };
 }

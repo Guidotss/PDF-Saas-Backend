@@ -26,6 +26,7 @@ export class Server {
       cors({
         origin: "*",
         methods: ["GET", "POST", "PUT", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
       })
     );
     this.app.use(express.json());
@@ -33,6 +34,8 @@ export class Server {
     this.app.use(
       fileUpload({
         limits: { fileSize: 50 * 1024 * 1024 },
+        abortOnLimit: true,
+        responseOnLimit: "File size limit has been reached",
       })
     );
     this.app.use(compression());
