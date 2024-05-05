@@ -1,4 +1,4 @@
-import express, { Router, json, urlencoded } from "express";
+import express, { Router, urlencoded } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import fileUpload from "express-fileupload";
@@ -31,13 +31,7 @@ export class Server {
     );
     this.app.use(express.json());
     this.app.use(urlencoded({ extended: true }));
-    this.app.use(
-      fileUpload({
-        limits: { fileSize: 50 * 1024 * 1024 },
-        abortOnLimit: true,
-        responseOnLimit: "File size limit has been reached",
-      })
-    );
+    this.app.use(express.raw({ type: "application/pdf", limit: "50mb" }));
     this.app.use(compression());
     this.app.use(this.routes);
 
