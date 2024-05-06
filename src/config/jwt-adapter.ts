@@ -1,25 +1,22 @@
 import jwt from "jsonwebtoken";
-import { envs } from "./envs";
-
 export class JwtAdapter {
-  static async sign(payload: object, expiresIn = "2h"): Promise<string | null> {
-    return new Promise((resolve) => {
-      jwt.sign(
-        payload,
-        envs.jwtSecret,
-        { expiresIn: expiresIn },
-        (err, token) => {
-          if (err) resolve(null);
-          resolve(token!);
-        }
-      );
+  static async sign(
+    payload: object,
+    secret: string,
+    expiresIn = "2h"
+  ): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      jwt.sign(payload, secret, { expiresIn: expiresIn }, (err, token) => {
+        if (err) reject(err);
+        resolve(token!);
+      });
     });
   }
 
-  static async verify<T>(token: string): Promise<T | null> {
-    return new Promise((resolve) => {
-      jwt.verify(token, envs.jwtSecret, (err, decoded) => {
-        if (err) resolve(null);
+  static async verify<T>(token: string, secret: string): Promise<T> {
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, secret, (err, decoded) => {
+        if (err) reject(err as Error);
         resolve(decoded as T);
       });
     });

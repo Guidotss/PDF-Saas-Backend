@@ -1,40 +1,36 @@
-import { JwtAdapter } from "../../../config";
-import { CustomError, AuthRepository, RenewTokenDto } from "../../";
-
-interface UserToken {
-  ok: boolean;
-  token: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
-}
+import { JwtAdapter, envs } from "../../../config";
+import {
+  CustomError,
+  AuthRepository,
+  RenewTokenDto,
+  CustomAuthReponse,
+  SignToken,
+  VerifyToken,
+  TokenData,
+} from "../../";
 
 interface RenewToken {
-  execute: (token: RenewTokenDto) => Promise<UserToken>;
+  execute: (token: RenewTokenDto) => Promise<CustomAuthReponse>;
 }
-
-type SignToken = (payload: object, expiresIn: string) => Promise<string | null>;
-type VerifyToken = (token: string) => Promise<string | null>;
-
 export class RenewTokenUseCase implements RenewToken {
+  private readonly jsonSecret = envs.jwtSecret;
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly signToken: SignToken = JwtAdapter.sign,
     private readonly verifyToken: VerifyToken = JwtAdapter.verify
   ) {}
 
-  async execute({ token }: RenewTokenDto): Promise<UserToken> {
-    const { userId } = (await this.verifyToken(token)) as unknown as {
-      userId: string;
-    };
+  async execute({ token }: RenewTokenDto): Promise<CustomAuthReponse> {
+    const { userId } = await this.verifyToken<TokenData>(
+      token,
+      this.jsonSecret
+    );
 
     if (!userId) throw new CustomError("Unauthorized", 401);
 
     const user = await this.authRepository.getUserById(userId);
 
-    const newToken = await this.signToken({ userId }, "2h");
+    const newToken = await this.signToken({ userId }, this.jsonSecret, "1h");
 
     if (!newToken) throw new CustomError("Internal Server Error", 500);
 

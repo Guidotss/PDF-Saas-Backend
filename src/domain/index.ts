@@ -14,6 +14,8 @@ export * from "./entities/auth/auth.entity";
 
 export * from "./errors/custom.error";
 
-export * from "./use-cases/auth/login";
-export * from "./use-cases/auth/register";
+export * from "./use-cases/auth/login.use-case";
+export * from "./use-cases/auth/register.use-case";
 export * from "./use-cases/auth/renew-token";
+
+export * from "./types"; 
