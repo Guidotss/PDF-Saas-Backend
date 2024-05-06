@@ -1,11 +1,6 @@
-import {
-  AuthRepository,
-  CustomAuthReponse,
-  CustomError,
-  LoginDto,
-  SignToken,
-} from "../..";
+import { AuthRepository, CustomError, LoginDto } from "../..";
 import { JwtAdapter, envs } from "../../../config";
+import { CustomAuthReponse, SignToken } from "../../types/";
 
 interface ILoginUseCase {
   execute(userData: LoginDto): Promise<CustomAuthReponse>;

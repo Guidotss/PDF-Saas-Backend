@@ -1,13 +1,11 @@
 import { JwtAdapter, envs } from "../../../config";
+import { CustomError, AuthRepository, RenewTokenDto } from "../../";
 import {
-  CustomError,
-  AuthRepository,
-  RenewTokenDto,
   CustomAuthReponse,
   SignToken,
-  VerifyToken,
   TokenData,
-} from "../../";
+  VerifyToken,
+} from "../../types";
 
 interface RenewToken {
   execute: (token: RenewTokenDto) => Promise<CustomAuthReponse>;

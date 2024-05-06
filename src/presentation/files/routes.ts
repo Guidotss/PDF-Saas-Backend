@@ -1,13 +1,18 @@
 import { Router } from "express";
 import { FilesController } from "./controllers";
-import { PdfDecoder } from "../../presentation/services/pdf-decoder";
+import {
+  FilesDataSourceImpl,
+  FilesRepositoryImpl,
+} from "../../infraestructure";
 
 export class FileRoutes {
   static get router() {
     const routes = Router();
-    const pdfDecoder = new PdfDecoder();
-    const controller = new FilesController(pdfDecoder);
-    
+    const filesDatasource = new FilesDataSourceImpl();
+    const filesRepository = new FilesRepositoryImpl(filesDatasource);
+
+    const controller = new FilesController(filesRepository);
+
     routes.post("/upload", controller.uploadPdf);
 
     return routes;

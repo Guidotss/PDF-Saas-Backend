@@ -1,10 +1,11 @@
 import fs from "fs";
 import path from "path";
 import { Response, Request } from "express";
-import { PdfDecoder } from "../../presentation/services/pdf-decoder";
-import { CustomError } from "../../domain";
+import { CustomError, FilesRepository, UploadFileDto, UploadFilesUseCase } from "../../domain";
 export class FilesController {
-  constructor(private readonly pdfDecoder: PdfDecoder) {}
+  constructor(private readonly fileRepository: FilesRepository) {
+    this.fileRepository = fileRepository;
+  }
   private handleError = (error: unknown, response: Response) => {
     if (error instanceof CustomError) {
       return response
@@ -33,22 +34,27 @@ export class FilesController {
     });
   };
 
-  public uploadPdf = async (req: Request, res: Response) => {
+  public uploadPdf = (req: Request, res: Response) => {
     try {
-      const buffer = req.body;
-      if (!buffer) {
-        throw new CustomError("Missing base64 field", 400);
-      }
-      const text = await this.pdfDecoder.decodeBase64AndExtractText({
-        pdfBuffer: buffer,
-      });
-      fs.writeFileSync(path.join("uploads/", "file.pdf"), buffer);
+      const [error, uploadFileDto] = UploadFileDto.fromRequest(req.body);
 
-      return res.status(200).json({
-        ok: true,
-        message: "File uploaded successfully",
-        text,
-      });
+      if(error) {
+        return res.status(400).json({
+          ok: false,
+          message: error,
+        });
+      }
+
+      new UploadFilesUseCase(this.fileRepository)
+        .execute(uploadFileDto!)
+        .then((response) => {
+          return res.status(200).json(response);
+        })
+        .catch((error) => {
+          return this.handleError(error, res);
+        });
+
+
     } catch (error) {
       return this.handleError(error, res);
     }

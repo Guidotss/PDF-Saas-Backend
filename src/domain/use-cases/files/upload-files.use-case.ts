@@ -1,17 +1,23 @@
-import { FilesRepository } from "../../";
+import { FilesRepository, UploadFileDto } from "../../";
 
 interface CustomResponse {
   ok: boolean;
   message: string;
+  text: string;
 }
 
 interface IUploadFilesUseCase {
-  exceute(files: any): Promise<CustomResponse>;
+  execute(uploadFileDto: UploadFileDto): Promise<CustomResponse>;
 }
 
 export class UploadFilesUseCase implements IUploadFilesUseCase {
   constructor(private readonly fileRepository: FilesRepository) {}
-  exceute(files: any): Promise<CustomResponse> {
-    throw new Error("Method not implemented.");
+  async execute({ buffer }: UploadFileDto): Promise<CustomResponse> {
+    const url = await this.fileRepository.uploadFile(buffer);
+    return {
+      ok: true,
+      message: "File uploaded successfully",
+      text: url,
+    };
   }
 }
